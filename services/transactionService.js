@@ -20,6 +20,14 @@ class TransactionService{
             console.log(e);
         }
     }
+
+    static async create(description, value, category, date, type){
+        const [year, month, day] = date.split("-");
+        const yearMonth = `${year}-${month}`;
+        const newTransaction = new TransactionModel({description, value, category, year, month, day, yearMonth, yearMonthDay: date, type});
+        await newTransaction.save();
+        return newTransaction;
+    }
 }
 
 module.exports = TransactionService;

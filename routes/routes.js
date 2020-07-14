@@ -26,7 +26,18 @@ transactionRouter.get("/yearMonth/:yearMonth", (req, res) => {
 transactionRouter.get("/periods", (req, res) => {
     ts.getPeriods().then(periods => {
         res.send(periods);
-    })
+    });
+});
+
+transactionRouter.post("/", (req, res) => {
+    const {description, value, category, date, type} = req.body;
+    ts.create(description, value, category, date, type).then(newTransaction => {
+        res.send(newTransaction);
+    }).catch(e => {
+        console.log(e);
+        res.status(500);
+        res.end();
+    });
 });
 
 
