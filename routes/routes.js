@@ -9,6 +9,20 @@ transactionRouter.get("/all", (req, res) => {
     });
 });
 
+transactionRouter.get("/id/:id", (req, res) => {
+    var {id} = req.params
+    ts.findOne(id).then(transaction => {
+        if(transaction === null){
+            res.status(404).end();
+        } else {
+            res.send(transaction);
+        }
+    }).catch(e => {
+        console.log(e);
+        res.status(400).end();
+    })
+});
+
 transactionRouter.get("/description/:description", (req, res) => {
     const {description} = req.params;
     ts.getTransactions({description}).then(transactions => {
@@ -40,6 +54,14 @@ transactionRouter.post("/", (req, res) => {
     });
 });
 
-
+transactionRouter.put("/", (req, res) => {
+    ts.update(req.body).then(newTransaction => {
+        if(newTransaction === null){
+            res.status(404).end();
+        } else {
+            res.send(newTransaction);
+        }
+    });
+});
 
 module.exports = transactionRouter;
