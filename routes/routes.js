@@ -4,7 +4,6 @@ const transactionRouter = express.Router();
 
 transactionRouter.get("/all", (req, res) => {
     ts.getTransactions({}).then(transactions => {
-        console.log(transactions);
         res.send(transactions);
     });
 });
@@ -61,6 +60,18 @@ transactionRouter.put("/", (req, res) => {
         } else {
             res.send(newTransaction);
         }
+    });
+});
+
+transactionRouter.delete("/:id", (req, res) => {
+    ts.delete(req.params.id).then(deleted => {
+        if(deleted === null){
+            res.status(404);
+        } else {
+            res.status(200);
+        }
+
+        res.end();
     });
 });
 

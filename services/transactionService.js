@@ -10,12 +10,12 @@ const TransactionModel = require('../models/TransactionModel');
 
 class TransactionService{
     static async getTransactions(filtros = {}){
-        return await TransactionModel.find(filtros);
+        return await TransactionModel.find(filtros).sort({yearMonthDay: 1});
     }
 
     static async getPeriods(){
         try{
-            return await TransactionModel.aggregate([{$group: {_id: "$yearMonth"}}, {$project: {_id:0, "yearMonth": "$_id"}}, {$sort: {yearMonth: 1}}]);
+            return await TransactionModel.aggregate([{$group: {_id: "$yearMonth"}}, {$project: {_id:0, "yearMonth": "$_id"}}, {$sort: {yearMonthDay: 1}}]);
         } catch(e){
             console.log(e);
         }
@@ -34,7 +34,6 @@ class TransactionService{
     }
 
     static async update(trsctn){
-        console.log(trsctn);
         const currentTransaction = await TransactionService.findOne({_id:trsctn.id});
         if(currentTransaction === null){
             return currentTransaction;
@@ -51,6 +50,17 @@ class TransactionService{
         }
 
         return await TransactionModel.findOneAndUpdate({_id: currentTransaction._id}, trsctn, {new: true});
+    }
+
+    static async delete(id){
+        const transaction = await TransactionService.findOne({_id: id});
+        if(transaction === null){
+            return transaction
+        }
+
+        TransactionModel.findOneAndDelete({_id: transaction._id}).then(res => {
+            return transaction;
+        });
     }
 
     static async validaData(strData){
