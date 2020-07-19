@@ -15,7 +15,7 @@ class TransactionService{
 
     static async getPeriods(){
         try{
-            return await TransactionModel.aggregate([{$group: {_id: "$yearMonth"}}, {$project: {_id:0, "yearMonth": "$_id"}}, {$sort: {yearMonthDay: 1}}]);
+            return await TransactionModel.aggregate([{$group: {_id: "$yearMonth"}}, {$project: {_id:0, "yearMonth": "$_id"}}, {$sort: {yearMonth: -1}}]);
         } catch(e){
             console.log(e);
         }

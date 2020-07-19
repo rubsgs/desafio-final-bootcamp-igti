@@ -4,7 +4,7 @@ export default function Transaction({transaction, handleClick}) {
     const {description, category, day, type, value} = transaction;
     const rowColor = type === "+" ? "income" : "outcome"
     return (
-        <div className={`row ${rowColor}`} >
+        <div className={`row ${rowColor}`}>
             <div className="col l1 day">
                 {day}
             </div>
