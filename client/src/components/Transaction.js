@@ -12,7 +12,7 @@ export default function Transaction({transaction, handleClick}) {
                 <div className="category">
                     {category}
                 </div>
-                <div className="descriptio">
+                <div className="description">
                     {description}
                 </div>
             </div>
@@ -20,8 +20,12 @@ export default function Transaction({transaction, handleClick}) {
                 {value}
             </div>
             <div className="col l2 options">
-                <i className="material-icons">edit</i>
-                <i className="material-icons">delete</i>
+                <button className="btn-flat transparent waves-effect waves-light">
+                    <i className="material-icons">edit</i>
+                </button>
+                <button className="btn-flat transparent waves-effect waves-light">
+                    <i className="material-icons">delete</i>
+                </button>
             </div>
         </div>
     )

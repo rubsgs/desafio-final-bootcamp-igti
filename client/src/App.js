@@ -3,12 +3,14 @@ import TransactionApi from './services/TransactionApiService';
 import Transaction from './components/Transaction';
 import PeriodSelector from './components/PeriodSelector';
 import Loader from './components/Loader';
+import Filter from './components/Filter';
 
 export default function App() {
   let [transactions, setTransactions] = useState([]);
+  let [shownTransactions, setShownTransactions] = useState([]);
   let [periods, setPeriods] = useState([]);
   let [currentPeriod, setCurrentPeriod] = useState(0);
-  let [modalOpen, setModalOpen] = useState(true);
+  let [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
       
@@ -33,7 +35,8 @@ export default function App() {
       console.log(strData);
       const initTransactions = await TransactionApi.getByYearMonth(initPeriods[currentIndex].yearMonth);
       setTransactions(initTransactions);
-      setModalOpen(false);
+      setShownTransactions(initTransactions)
+      setLoading(false);
     })();
   }, []);
 
@@ -44,23 +47,54 @@ export default function App() {
   }
 
   const handlePeriodChange = async (newPeriod) => {
-    setModalOpen(true);
+    setLoading(true);
     let newIndex = periods.findIndex((p) => p.yearMonth === newPeriod.yearMonth);
     const newTransactions = await TransactionApi.getByYearMonth(newPeriod.yearMonth);
 
     setCurrentPeriod(newIndex);
     setTransactions(newTransactions);
-    setModalOpen(false);
+    setLoading(false);
+  }
+
+  const changeFilter = (text) => {
+    if(text.trim() === ""){
+      setShownTransactions(transactions);
+    } else {
+      const filtered = transactions.filter((transaction) => {
+        console.log(transaction.description);
+        return transaction.description.toLowerCase().indexOf(text) > -1;
+      });
+
+      setShownTransactions(filtered);
+    }
   }
 
   return (
     <div className="container">
       <h1>Desafio Final do Bootcamp Full Stack</h1>
-      {modalOpen && <Loader />}
-      {!modalOpen && periods.length > 0 && <PeriodSelector periodList={periods} currentPeriodIndex={currentPeriod} handlePeriodSelection={handlePeriodChange} />}
-      {!modalOpen && transactions.map((transaction) => {
+      {loading && <Loader />}
+      {!loading && periods.length > 0 && <PeriodSelector periodList={periods} currentPeriodIndex={currentPeriod} handlePeriodSelection={handlePeriodChange} />}
+      {!loading && 
+        <div className="row" style={styles.filterRow}>
+          <div className="col l2">
+            <button className="btn waves-effect waves-light">Novo Lançamento</button>
+          </div>
+          <div className="col l10">
+            <Filter handleFilterChange={changeFilter}/>
+          </div>
+        </div>
+      }
+      {!loading && shownTransactions.map((transaction) => {
         return <Transaction key={transaction._id} transaction={transaction} handleClick={handleTransactionClick} />
       })}
     </div>
   );
+}
+
+const styles = {
+  "filterRow": {
+    "display": "flex",
+    "flexDirection": "row",
+    "alignItems": "center"
+  }
 }
