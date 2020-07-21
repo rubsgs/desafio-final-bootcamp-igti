@@ -104,8 +104,17 @@ export default function App() {
     setModalOpen(true);
   }
 
-  const deleteTransaction = () => {
-    console.log("delete");
+  const deleteTransaction = async (id) => {
+    setLoading(true);
+    try{
+      await TransactionApi.delete(id);
+      console.log("Transação Removida!");
+    } catch(e){
+      console.log(e);
+      window.alert("Ocorreu um erro ao excluir a transação");
+    } finally{
+      setRequestRefresh(true);
+    }
   }
 
   return (

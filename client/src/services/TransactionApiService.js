@@ -23,4 +23,9 @@ export default class TransactionApi{
         const newTransaction = await axios.post(`${API_URL}`, transaction);
         return newTransaction.data;
     }
+
+    static async delete(id){
+        const deletedTransaction = await axios.delete(`${API_URL}/${id}`);
+        return deletedTransaction.data;
+    }
 }

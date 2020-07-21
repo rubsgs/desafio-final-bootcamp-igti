@@ -9,8 +9,7 @@ export default function Transaction({transaction, handleUpdate, handleDelete}) {
     }
 
     const handleDeleteClick = () => {
-        console.log("delete");
-        console.log(transaction);
+        handleDelete(transaction._id);
     }
 
     return (
