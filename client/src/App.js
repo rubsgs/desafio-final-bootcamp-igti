@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import TransactionApi from './services/TransactionApiService';
-import Transaction from './components/Transaction';
+import Transaction from './components/Transaction/Transaction';
 import PeriodSelector from './components/PeriodSelector';
 import Loader from './components/Loader';
 import Filter from './components/Filter';
 import TransactionModal from './components/TransactionModal';
+import Summary from './components/Summary/Summary';
 
 
 export default function App() {
@@ -120,9 +121,12 @@ export default function App() {
   return (
     <div>
       <div className="container" style={styles.relativeContainer}>
-        <h1>Desafio Final do Bootcamp Full Stack</h1>
+        <div style={{textAlign:"center"}}><h1>Bootcamp Full Stack - Desafio Final</h1></div>
         {loading && <Loader />}
         {!loading && periods.length > 0 && <PeriodSelector periodList={periods} currentPeriodIndex={currentPeriod} handlePeriodSelection={handlePeriodChange} />}
+        <div className="summary">
+          {!loading && <Summary transactionList={shownTransactions} />}
+        </div>
         {!loading && 
           <div className="row" style={styles.filterRow}>
             <div className="col l2">
