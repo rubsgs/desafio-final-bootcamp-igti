@@ -11,8 +11,9 @@ export default function App() {
   let [transactions, setTransactions] = useState([]);
   let [currentTransaction, setCurrentTransaction] = useState(null);
   let [shownTransactions, setShownTransactions] = useState([]);
+  let [requestRefresh, setRequestRefresh] = useState(false);
   let [periods, setPeriods] = useState([]);
-  let [currentPeriod, setCurrentPeriod] = useState(0);
+  let [currentPeriod, setCurrentPeriod] = useState(-1);
   let [loading, setLoading] = useState(true);
   let [modalOpen, setModalOpen] = useState(false);
   useEffect(() => {
@@ -33,20 +34,19 @@ export default function App() {
       if(currentIndex < 0){
         currentIndex = initPeriods.length - 1;
       }
-      setCurrentPeriod(currentIndex);
+      if(currentPeriod < 0){
+        setCurrentPeriod(currentIndex);
+      } else {
+        setCurrentPeriod(currentIndex);
+      }
 
       const initTransactions = await TransactionApi.getByYearMonth(initPeriods[currentIndex].yearMonth);
       setTransactions(initTransactions);
-      setShownTransactions(initTransactions)
+      setShownTransactions(initTransactions);
       setLoading(false);
+      setRequestRefresh(false);
     })();
-  }, []);
-
-  const handleTransactionClick = (e) => {
-    console.log("click")
-    console.log(e)
-    console.log(this);
-  }
+  }, [requestRefresh]);
 
   const handlePeriodChange = async (newPeriod) => {
     setLoading(true);
@@ -55,6 +55,7 @@ export default function App() {
 
     setCurrentPeriod(newIndex);
     setTransactions(newTransactions);
+    setShownTransactions(newTransactions);
     setLoading(false);
   }
 
@@ -79,8 +80,32 @@ export default function App() {
     setModalOpen(false);
   }
 
-  const saveTransaction = () => {
-    closeModal();
+  const saveTransaction = async (transaction) => {
+    
+      try {
+        if(transaction.id !== null && transaction.id !== "" && transaction.id !== undefined){
+          await TransactionApi.update(transaction);
+          window.alert("Transação atualizada");
+        } else {
+          await TransactionApi.create(transaction);
+          window.alert("Transação cadastrada!");
+        }
+
+        closeModal();
+        setRequestRefresh(true);
+      } catch(e){
+        window.alert("Ocorreu um erro ao efetuar a operacao!");
+        console.log(e);
+      }
+  }
+
+  const openUpdateTransaction = (transaction) => {
+    setCurrentTransaction(transaction);
+    setModalOpen(true);
+  }
+
+  const deleteTransaction = () => {
+    console.log("delete");
   }
 
   return (
@@ -101,11 +126,11 @@ export default function App() {
         }
         <div className="transaction-list">
           {!loading && shownTransactions.map((transaction) => {
-            return <Transaction key={transaction._id} transaction={transaction} handleClick={handleTransactionClick} />
+            return <Transaction key={transaction._id} transaction={transaction} handleDelete={deleteTransaction} handleUpdate={openUpdateTransaction}/>
           })}
         </div>
       </div>
-      {!loading && modalOpen && <TransactionModal modalOpen={modalOpen} closeModal={closeModal} handleSaveTransaction={saveTransaction}/> }
+      {!loading && modalOpen && <TransactionModal modalOpen={modalOpen} closeModal={closeModal} transaction={currentTransaction} handleSaveTransaction={saveTransaction}/> }
     </div>
   );
 }

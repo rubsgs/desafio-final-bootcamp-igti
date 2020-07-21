@@ -43,8 +43,8 @@ transactionRouter.get("/periods", (req, res) => {
 });
 
 transactionRouter.post("/", (req, res) => {
-    const {description, value, category, date, type} = req.body;
-    ts.create(description, value, category, date, type).then(newTransaction => {
+    const {description, value, category, yearMonthDay, type} = req.body;
+    ts.create(description, value, category, yearMonthDay, type).then(newTransaction => {
         res.send(newTransaction);
     }).catch(e => {
         console.log(e);

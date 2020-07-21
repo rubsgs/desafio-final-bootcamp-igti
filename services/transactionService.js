@@ -25,10 +25,10 @@ class TransactionService{
         return await TransactionModel.findOne({_id: id});
     }
 
-    static async create(description, value, category, date, type){
-        const [year, month, day] = date.split("-");
+    static async create(description, value, category, yearMonthDay, type){
+        const [year, month, day] = yearMonthDay.split("-");
         const yearMonth = `${year}-${month}`;
-        const newTransaction = new TransactionModel({description, value, category, year, month, day, yearMonth, yearMonthDay: date, type});
+        const newTransaction = new TransactionModel({description, value, category, year, month, day, yearMonth, yearMonthDay, type});
         await newTransaction.save();
         return newTransaction;
     }
